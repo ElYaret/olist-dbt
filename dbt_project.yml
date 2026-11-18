@@ -2,3 +2,12 @@ name: olist_dbt
 version: "1.0.0"
 profile: olist_dbt
 model-paths: ["models"]
+
+models:
+  olist_dbt:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts
