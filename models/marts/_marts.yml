@@ -1,0 +1,82 @@
+version: 2
+
+models:
+  - name: fct_order_items
+    description: Tabla de hechos. Una fila por item de pedido.
+    columns:
+      - name: order_item_key
+        description: Llave artificial, order_id mas el numero de item.
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_unique_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: customer_unique_id
+      - name: product_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_products')
+                field: product_id
+      - name: seller_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_sellers')
+                field: seller_id
+      - name: purchased_date
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_dates')
+                field: date_day
+      - name: order_status
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['delivered', 'shipped', 'canceled', 'unavailable', 'invoiced', 'processing', 'created', 'approved']
+      - name: price
+        data_tests:
+          - not_null
+      - name: freight_value
+        data_tests:
+          - not_null
+
+  - name: dim_customers
+    description: Una fila por persona (customer_unique_id), con los datos de su compra mas reciente.
+    columns:
+      - name: customer_unique_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    description: Una fila por producto, con la categoria en ingles cuando existe la traduccion.
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_sellers
+    description: Una fila por vendedor.
+    columns:
+      - name: seller_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: dim_dates
+    description: Una fila por dia, desde la primera hasta la ultima compra.
+    columns:
+      - name: date_day
+        data_tests:
+          - unique
+          - not_null

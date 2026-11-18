@@ -1,0 +1,51 @@
+version: 2
+
+models:
+  - name: stg_olist__customers
+    description: Una fila por cliente-pedido. Cada pedido genera un customer_id nuevo; la persona real es customer_unique_id.
+    columns:
+      - name: customer_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_olist__orders
+    description: Una fila por pedido, con las columnas de fecha renombradas.
+    columns:
+      - name: order_id
+        data_tests:
+          - unique
+          - not_null
+      - name: customer_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_olist__customers')
+                field: customer_id
+
+  - name: stg_olist__products
+    description: Una fila por producto. Corrige los typos del dataset original (lenght).
+    columns:
+      - name: product_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_olist__sellers
+    description: Una fila por vendedor.
+    columns:
+      - name: seller_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: stg_olist__order_reviews
+    description: Una fila por resena.
+    columns:
+      - name: review_id
+        description: En Olist algunos review_id se repiten en distintos pedidos, por eso este test solo avisa.
+        data_tests:
+          - unique:
+              config:
+                severity: warn
